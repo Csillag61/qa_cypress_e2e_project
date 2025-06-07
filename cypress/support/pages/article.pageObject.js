@@ -13,16 +13,20 @@ class ArticlePageObject extends PageObject {
     cy.contains('[data-qa=publish-btn]', 'Publish').click();
   }
 
-  editArticle(newTitle) {
-    cy.contains('[data-qa=article-title]', newTitle).click();
+  editArticle(currentTitle, newTitle) {
+    cy.contains('[data-qa=article-title]', currentTitle).click();
     cy.contains('[data-qa=edit-btn]', 'Edit').click();
     cy.get('[data-qa=title]').clear();
     cy.get('[data-qa=title]').type(newTitle);
     cy.contains('[data-qa=save-btn]', 'Save Changes').click();
   }
 
-  deleteArticle() {
-    cy.contains('[data-qa=delete-btn]', 'Delete').click();
+  deleteArticle(title) {
+    cy.contains('[data-qa=article-title]', title)
+      .parents('[data-qa=article-item]')
+      .within(() => {
+        cy.contains('[data-qa=delete-btn]', 'Delete').click();
+      });
   }
 
   assertArticleExists(title) {

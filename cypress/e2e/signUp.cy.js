@@ -12,16 +12,25 @@ describe('Sign Up Page', () => {
   let user;
 
   before(() => {
-    cy.task('db:clear'); // Ensure clean database state
+    cy.task('db:clear'); // Ensure a clean database state before tests
+
+    // Create 'anotherUser' if needed for your tests
+    cy.request('POST', '/api/users', {
+      username: 'anotherUser',
+      email: 'anotherUser@example.com',
+      password: 'AnotherUserPass123'
+    });
+
+    cy.login('testuser', 'TestPassword123'); // Ensure user is logged in
+  });
+
+  beforeEach(() => {
     user = {
       username: faker.internet.userName(),
       email: faker.internet.email(),
       password: faker.internet.password({ length: 12, memorable: true })
     };
-  });
-
-  beforeEach(() => {
-    signUpPage.visit(); // Navigate to sign-up page before each test
+    signUpPage.visit();
   });
 
   it('should register a user with valid credentials', () => {
@@ -30,7 +39,15 @@ describe('Sign Up Page', () => {
   });
 
   it('should prevent registration with an already taken email', () => {
-    signUpPage.signUp(user); // Using same email
+    // Register the user first
+    signUpPage.signUp(user);
+    homePage.assertUserLoggedIn(user.username);
+
+    // Log out to return to the sign-up page
+    homePage.logout(); // Make sure this method exists and works
+
+    // Attempt to register again with the same email
+    signUpPage.signUp(user);
     signUpPage.assertErrorMessage('Email already in use');
   });
 

@@ -29,14 +29,31 @@ describe('Article Management', () => {
   });
 
   it('should be edited using Edit button', () => {
-    const newTitle = faker.lorem.words(6);
+    // Create an article first
+    const articleData = {
+      title: faker.lorem.words(5),
+      description: faker.lorem.sentence(),
+      body: faker.lorem.paragraph()
+    };
+    articlePage.createArticle(articleData);
 
-    articlePage.editArticle(newTitle);
+    // Now edit the article
+    const newTitle = faker.lorem.words(6);
+    articlePage.editArticle(articleData.title, newTitle);
     articlePage.assertArticleUpdated(newTitle);
   });
 
   it('should be deleted using Delete button', () => {
-    articlePage.deleteArticle();
+    // Create an article first
+    const articleData = {
+      title: faker.lorem.words(5),
+      description: faker.lorem.sentence(),
+      body: faker.lorem.paragraph()
+    };
+    articlePage.createArticle(articleData);
+
+    // Now delete the article
+    articlePage.deleteArticle(articleData.title);
     articlePage.assertArticleDeleted();
   });
 });
